@@ -1,11 +1,11 @@
 const prerender = require('prerender');
 
-const forwardHeaders = require('./plugins/forwardHeaders');
-const stripHtml = require('./plugins/stripHtml');
-const healthcheck = require('./plugins/healthcheck');
-const removePrefetchTags = require('./plugins/removePrefetchTags');
-const log = require('./plugins/log');
-const consoleDebugger = require('./plugins/consoleDebugger');
+// const forwardHeaders = require('./plugins/forwardHeaders');
+// const stripHtml = require('./plugins/stripHtml');
+// const healthcheck = require('./plugins/healthcheck');
+// const removePrefetchTags = require('./plugins/removePrefetchTags');
+// const log = require('./plugins/log');
+// const consoleDebugger = require('./plugins/consoleDebugger');
 
 const options = {
 	pageDoneCheckInterval: process.env.PAGE_DONE_CHECK_INTERVAL || 500,
@@ -13,20 +13,17 @@ const options = {
 	waitAfterLastRequest: process.env.WAIT_AFTER_LAST_REQUEST || 250,
 	chromeFlags: [ '--no-sandbox', '--headless', '--disable-gpu', '--remote-debugging-port=9222', '--hide-scrollbars' ],
 };
-console.log('Starting with options:', options);
+// console.log('Starting with options:', options);
 
 const server = prerender(options);
 
-server.use(log);
-server.use(healthcheck('_health'));
-server.use(forwardHeaders);
-server.use(prerender.blockResources());
+server.use(prerender.sendPrerenderHeader());
+// server.use(prerender.blockResources());
 server.use(prerender.removeScriptTags());
-server.use(removePrefetchTags);
 server.use(prerender.httpHeaders());
-if (process.env.DEBUG_PAGES) {
-	server.use(consoleDebugger);
-}
-server.use(stripHtml);
+
+
+process.env.CACHE_TTL=60*60*24;
+server.use(require('prerender-memory-cache'));
 
 server.start();
