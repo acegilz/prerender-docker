@@ -6,7 +6,8 @@
   "dependencies": {
     "html-minifier": "^3.2.15",
     "pm2": "^2.10.3",
-    "prerender": "5.4.2"
+    "prerender": "5.4.2",
+    "prerender-memory-cache": "^1.0.2"
   },
   "devDependencies": {},
   "scripts": {
